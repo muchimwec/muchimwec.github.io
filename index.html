@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Director | Portfolio</title>
+    <style>
+        /* --- RESET & VARIABLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --accent-color: #ff3366;
+            --card-bg: #161616;
+            --transition: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- HERO SECTION --- */
+        header {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .nav-links {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .hero-text {
+            max-width: 900px;
+            margin-left: 5%;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            letter-spacing: -2px;
+        }
+
+        .hero-text span {
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-color);
+        }
+
+        /* --- FILTER BUTTONS --- */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            padding: 2rem 5%;
+            background: var(--bg-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid #333;
+            color: var(--text-color);
+            padding: 0.6rem 1.5rem;
+            cursor: pointer;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s var(--transition);
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+            border-color: var(--text-color);
+        }
+
+        /* --- PORTFOLIO GRID --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 0 5% 5rem 5%;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.4s var(--transition);
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .image-container {
+            width: 100%;
+            height: 400px;
+            background: #222;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Simulated project imagery using CSS gradients */
+        .img-placeholder {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .img-placeholder {
+            transform: scale(1.05);
+        }
+
+        .p1 { background: linear-gradient(45deg, #ff3366, #ff6a00); }
+        .p2 { background: linear-gradient(45deg, #0072ff, #00c6ff); }
+        .p3 { background: linear-gradient(45deg, #9400d3, #4b0082); }
+        .p4 { background: linear-gradient(45deg, #00f260, #0575e6); }
+
+        .project-info {
+            padding: 1.5rem;
+        }
+
+        .project-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-info p {
+            color: #888;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- LIGHTBOX MODAL --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.98);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            font-size: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-preview {
+            width: 100%;
+            height: 60vh;
+            border-radius: 8px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 5rem 5% 2rem 5%;
+            border-top: 1px solid #1c1c1c;
+            text-align: center;
+        }
+
+        .contact-trigger {
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .contact-trigger:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO Header -->
+    <header id="home">
+        <nav class="nav-links">
+            <a href="#work">Work</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <div class="hero-text">
+            <h1>I craft digital <span>experiences</span>, brand identities, & visual <span>stories</span>.</h1>
+        </div>
+    </header>
+
+    <!-- FILTER CONTROLS -->
+    <div class="controls" id="work">
+        <button class="filter-btn active" data-filter="all">All Work</button>
+        <button class="filter-btn" data-filter="branding">Branding</button>
+        <button class="filter-btn" data-filter="ui">UI/UX</button>
+        <button class="filter-btn" data-filter="digital">Digital Art</button>
+    </div>
+
+    <!-- PORTFOLIO GRID -->
+    <main class="grid">
+        <div class="project-card" data-category="branding" onclick="openModal('Neon Cyberpunk Identity', 'p1')">
+            <div class="image-container">
+                <div class="img-placeholder p1"></div>
+            </div>
+            <div class="project-info">
+                <h3>Neon Cyberpunk Identity</h3>
+                <p>Branding</p>
+            </div>
+        </div>
+
+        <div class="project-card" data-category="ui" onclick="openModal('Minimalist E-Commerce', 'p2')">
+            <div class="image-container">
+                <div class="img-placeholder p2"></div>
+            </div>
+            <div class="project-info">
+                <h3>Minimalist E-Commerce</h3>
+                <p>UI/UX</p>
+            </div>
+        </div>
+
+        <div class="project-card" data-category="digital" onclick="openModal('Abstract Geometry', 'p3')">
+            <div class="image-container">
+                <div class="img-placeholder p3"></div>
+            </div>
+            <div class="project-info">
+                <h3>Abstract Geometry</h3>
+                <p>Digital Art</p>
+            </div>
+        </div>
+
+        <div class="project-card" data-category="branding" onclick="openModal('Eco-Friendly Packaging', 'p4')">
+            <div class="image-container">
+                <div class="img-placeholder p4"></div>
+            </div>
+            <div class="project-info">
+                <h3>Eco-Friendly Packaging</h3>
+                <p>Branding</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- LIGHTBOX MODAL -->
+    <div class="modal" id="portfolioModal">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <div class="modal-content">
+            <div id="modalVisual" class="modal-preview"></div>
+            <h2 id="modalTitle">Project Title</h2>
+        </div>
+    </div>
+
+    <!-- FOOTER / CONTACT -->
+    <footer id="contact">
+        <p style="color: #666; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">Let's work together</p>
+        <a href="mailto:hello@yourdesignstudio.com" class="contact-trigger">hello@yourdesignstudio.com</a>
+        <p style="color: #444; margin-top: 4rem; font-size: 0.8rem;">&copy; 2026 Portfolio Studio. Built with passion.</p>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT -->
+    <script>
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-card');
+        const modal = document.getElementById('portfolioModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalVisual = document.getElementById('modalVisual');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const filterValue = button.getAttribute('data-filter');
+
+                projectCards.forEach(card => {
+                    if (filterValue === 'all' || card.dataset.category === filterValue) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        function openModal(title, placeholderClass) {
+            modal.classList.add('active');
+            modalTitle.textContent = title;
+            modalVisual.className = 'modal-preview ' + placeholderClass;
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        modal.addEventListener('click', event => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
